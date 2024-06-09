@@ -39,7 +39,7 @@ let loaded = (eventLoaded) => {
 
 		datos['interes'] = element3Value;
 
-		fetch('https://dawn-ce34a-default-rtdb.firebaseio.com/collection', {
+		fetch('https://dawn-ce34a-default-rtdb.firebaseio.com/collection.json', {
 			method: 'POST',
 			body: JSON.stringify(datos),
 			headers: {
