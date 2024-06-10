@@ -607,7 +607,7 @@ a {
 .before-footer-section {
 	padding: 7rem 0 12rem 0!important;
 }
-.blog-section {
+.event-section {
 	padding: 7rem 0 12rem 0;
 	.post-entry {
 		a {
@@ -875,17 +875,4 @@ textarea {
 }
 .text-primary {
 	color: $primary!important;
-}
-.thankyou-icon {
-	position: relative;
-	color: $primary;
-	&:before {
-		position: absolute;
-		content: "";
-		width: 50px;
-		height: 50px;
-		
-		border-radius: 50%;
-		background:rgba($primary, .2);
-	}
 }

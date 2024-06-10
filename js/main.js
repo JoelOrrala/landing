@@ -51,8 +51,6 @@ let loaded = (eventLoaded) => {
 				console.log(datos);
 			})
 			.catch(error => console.error(error));
-
-		debugger;
 	});
 
 	function validateEmail(email) {
@@ -62,3 +60,16 @@ let loaded = (eventLoaded) => {
 };
 
 window.addEventListener("DOMContentLoaded", loaded);
+
+
+async function obtenerDatos() {
+	const url = "https://www.ejemplo.com/"; 
+	const respuesta = await fetch(url);
+	if (!respuesta.ok) {
+		console.error("Error:", respuesta.status);
+		return;
+	}
+	const datos = await respuesta.json();
+	console.log(datos);
+}
+obtenerDatos();
