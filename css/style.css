@@ -599,7 +599,7 @@ a {
     font-size: 32px;
     font-weight: 500;
     text-decoration: none;
-    color: #3b5d50; }
+    color: #de283b; }
   .footer-section .custom-social li {
     margin: 2px;
     display: inline-block; }
@@ -610,10 +610,10 @@ a {
       line-height: 40px;
       display: inline-block;
       background: #dce5e4;
-      color: #3b5d50;
+      color: #de283b;
       border-radius: 50%; }
       .footer-section .custom-social li a:hover {
-        background: #3b5d50;
+        background: #de283b;
         color: #ffffff; }
   .footer-section .border-top {
     border-color: #dce5e4; }
