@@ -990,3 +990,7 @@ textarea {
 .text-primary {
   color: #3b5d50 !important;
 }
+
+#tabla-populares {
+  margin-top: 30px;
+}
