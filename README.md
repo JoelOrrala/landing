@@ -198,30 +198,6 @@ full_build.log
 
 ---
 
-# Integration with GDAL
-
-After building PDFium:
-
-1. Use the generated:
-
-```
-PDFium.xcframework
-```
-
-2. Add it to your **Xcode project** or **GDAL build environment**.
-
-3. Ensure GDAL is compiled with:
-
-```
-RTTI enabled (-frtti)
-exceptions enabled (-fexceptions)
-same C++ standard library (libc++)
-```
-
-This ensures ABI compatibility between GDAL and PDFium.
-
----
-
 # Troubleshooting
 
 ### Clean build
