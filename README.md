@@ -179,22 +179,17 @@ The script `patches/apply_ios_patches.sh` applies several required fixes for iOS
 
 # Repository Structure
 
-```
+```text
 pdfium_ios_build/
-
-build_pdfium_ios.sh
-args_ios_device_arm64.gn
-args_ios_sim_arm64.gn
-args_ios_sim_x64.gn
-
-patches/
-  apply_ios_patches.sh
-
-pdfium/        (downloaded automatically)
-depot_tools/   (downloaded automatically)
-
-full_build.log
-```
+├── build_pdfium_ios.sh
+├── args_ios_device_arm64.gn
+├── args_ios_sim_arm64.gn
+├── args_ios_sim_x64.gn
+├── patches/
+│   └── apply_ios_patches.sh
+├── pdfium/        (downloaded automatically)
+├── depot_tools/   (downloaded automatically)
+└── full_build.log
 
 ---
 
