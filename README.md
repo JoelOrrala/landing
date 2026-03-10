@@ -4,7 +4,7 @@ Independent project to build GDAL as an `.xcframework` for iOS.
 
 The build automatically downloads **GDAL** and **PROJ**, and allows integrating **PDFium** as the backend for GDAL's PDF driver.
 
-## Resultado
+## Result
 
 Generates `install-ios/GDAL.xcframework` ready to use in Xcode, with support for:
 
@@ -14,7 +14,7 @@ Generates `install-ios/GDAL.xcframework` ready to use in Xcode, with support for
 
 The build includes support for the **GDAL PDF driver using PDFium**.
 
-## Requisitos
+## Requirements
 
 - macOS with Xcode installed
 - CMake 3.9+
@@ -75,7 +75,7 @@ patches/apply_gdal_ios_patches.sh
 
 during the execution of `build-all.sh`.
 
-## Uso rápido
+## Quick Start
 
 ```bash
 cd gdal-ios
@@ -85,7 +85,7 @@ chmod +x build-all.sh build-proj-ios.sh build-gdal-ios.sh
 
 The script will download PROJ and GDAL, build them, and create the `.xcframework`. This process may take 15–30 minutes.
 
-## Uso avanzado
+## Advanced use
 
 ### Use local sources
 
@@ -113,7 +113,7 @@ By default sources are downloaded to `sources/`. You can change it:
 SOURCES_DIR=/another/path ./build-all.sh
 ```
 
-## Estructura del proyecto
+## Project Structure
 
 ```
 gdal-ios/
@@ -129,14 +129,14 @@ gdal-ios/
 └── GDAL.xcframework # ← Resultado final
 ```
 
-## Uso en Xcode
+## Use in Xcode
 
 1. Drag `GDAL.xcframework` into your project
 2. In "Frameworks, Libraries, and Embedded Content": **Embed & Sign**
 3. In Build Settings > Header Search Paths: `$(SRCROOT)/path/to/GDAL.xcframework/ios-arm64/GDAL.framework/Headers` (recursive)
 4. If using Swift: create a Bridging Header with `#import "gdal.h"`
 
-## Notas
+## Notes
 
 This project **does not build PDFium automatically**.
 
@@ -148,10 +148,10 @@ pdfium_ios_build
 
 The resulting build must be placed inside the `ios/` directory so GDAL can link against `libpdfium.a`.
 
-## Licencia
+## License
 
 GDAL is licensed under MIT/X License. PROJ under MIT. See the original projects for more details.
 
-## Repositorio independiente
+## Independent repository
 
 You can upload this project to your own repository. It contains only scripts and does not include GDAL/PROJ source code. Sources are downloaded at build time from GitHub (OSGeo/PROJ, OSGeo/gdal).
