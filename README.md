@@ -40,14 +40,20 @@ Expected structure:
 
 ```
 pdfium_ios_build/
-└── pdfium
-└── out
-├── ios-arm64
-│ └── obj/libpdfium.a
-├── ios-sim-arm64
-│ └── obj/libpdfium.a
-└── ios-sim-x86_64
-└── obj/libpdfium.a
+└── pdfium/
+    └── out/
+        ├── ios-arm64/
+        │   └── obj/
+        │       └── libpdfium.a
+        ├── ios-sim-arm64/
+        │   └── obj/
+        │       └── libpdfium.a
+        ├── ios-sim-x86_64/
+        │   └── obj/
+        │       └── libpdfium.a
+        ├── universal-sim/
+        │   └── libpdfium.a
+        └── PDFium.xcframework
 ```
 
 During compilation, the script `build-gdal-ios.sh` automatically detects the appropriate library for each architecture.
