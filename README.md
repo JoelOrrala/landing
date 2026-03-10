@@ -12,7 +12,7 @@ The build system automatically:
 
 - Downloads and configures **depot_tools**
 - Fetches **PDFium source code**
-- Applies required **iOS build patches**
+- Applies required **iOS and GDAL compatibility patches**
 - Builds PDFium for:
 
   - iOS devices (`arm64`)
@@ -168,12 +168,103 @@ These settings ensure **compatibility with GDAL builds**.
 
 # Patches Applied
 
-The script `patches/apply_ios_patches.sh` applies several required fixes for iOS builds:
+The script `patches/apply_ios_patches.sh` applies several required fixes to allow PDFium to compile correctly on iOS and remain compatible with GDAL.
 
-- Disables PDFium test targets that break cross-compilation
-- Fixes `libjpeg_turbo` dependency issues on iOS
-- Fixes duplicate Skia source compilation
-- Adjusts build configuration for iOS toolchains
+### iOS build patches
+
+These patches adjust the PDFium build system to work properly with iOS toolchains:
+
+- Disable `pdfium_unittests`
+- Disable `pdfium_embeddertests`
+- Simplify `pdfium_all` target
+- Disable a `libjpeg_turbo` assertion that prevents iOS builds
+- Prevent duplicate compilation of `SkCreateCGImageRef.cpp`
+
+These changes allow PDFium to compile cleanly for iOS device and simulator architectures.
+
+---
+
+### GDAL compatibility patch (PDFium 5461)
+
+GDAL 3.7 expects several API signatures that differ slightly from upstream PDFium.  
+A compatibility patch is applied to align PDFium with GDAL's expectations.
+
+This patch modifies the following components:
+
+- Introduces `CPDF_OCContextInterface`
+- Adjusts the inheritance of `CPDF_OCContext`
+- Updates several rendering method signatures to use:
+
+```
+const pdfium::span<const TextCharPos>&
+```
+
+instead of
+
+```
+pdfium::span<const TextCharPos>
+```
+
+Affected files include:
+
+```
+core/fpdfapi/page/cpdf_occontext.cpp
+core/fpdfapi/page/cpdf_occontext.h
+core/fpdfapi/render/cpdf_renderoptions.h
+core/fxge/agg/fx_agg_driver.*
+core/fxge/cfx_renderdevice.*
+core/fxge/renderdevicedriver_iface.*
+core/fxge/win32/printer_driver.
+```
+
+These changes ensure compatibility with the GDAL PDF driver implementation.
+
+---
+
+### Chromium style fix
+
+Recent Chromium toolchains require destructors overriding a virtual base class to explicitly declare `override`.
+
+The following change is applied:
+
+```
+~CPDF_OCContextInterface() override = default;
+```
+
+This prevents the following compiler error during the PDFium build:
+
+```
+[chromium-style] Overriding method must be marked with 'override' or 'final'
+```
+
+Without this modification, the build fails during compilation of the PDFium core modules.
+
+---
+
+All patches are applied automatically by:
+
+```
+patches/apply_ios_patches.sh
+```
+
+during the build process.
+
+---
+
+# GDAL Compatibility
+
+This build is specifically configured for integration with **GDAL 3.7**.
+
+Key compatibility aspects:
+
+- PDFium built as a **static library**
+- Exceptions and RTTI enabled
+- V8 and XFA disabled
+- Skia disabled
+- Compatible span signatures used by GDAL PDF driver
+- Abseil headers exposed for GDAL compilation
+
+The resulting library is intended to be used by GDAL's **PDF driver with PDFium backend**.
 
 ---
 
@@ -191,6 +282,7 @@ pdfium_ios_build/
 ├── depot_tools/   (downloaded automatically)
 └── full_build.log
 ```
+
 ---
 
 # Troubleshooting
