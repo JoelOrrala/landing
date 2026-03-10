@@ -1,324 +1,157 @@
-# PDFium iOS Build for GDAL Integration
+# GDAL for iOS
 
-This repository provides a **reproducible build system for PDFium on iOS**, configured for integration with **GDAL**.
+Independent project to build GDAL as an `.xcframework` for iOS.
 
-The build process downloads PDFium, applies required patches, compiles the library for all required iOS architectures, and generates a final **XCFramework** ready to use in Xcode projects or GDAL-based applications.
+The build automatically downloads **GDAL** and **PROJ**, and allows integrating **PDFium** as the backend for GDAL's PDF driver.
 
----
+## Resultado
 
-# Overview
+Generates `install-ios/GDAL.xcframework` ready to use in Xcode, with support for:
 
-The build system automatically:
+- **iOS arm64** (physical devices)
+- **iOS Simulator arm64** (Apple Silicon)
+- **iOS Simulator x86_64** (Intel)
 
-- Downloads and configures **depot_tools**
-- Fetches **PDFium source code**
-- Applies required **iOS and GDAL compatibility patches**
-- Builds PDFium for:
+The build includes support for the **GDAL PDF driver using PDFium**.
 
-  - iOS devices (`arm64`)
-  - iOS simulator (`arm64`)
-  - iOS simulator (`x86_64`)
+## Requisitos
 
-- Creates a **universal simulator library**
-- Generates the final **PDFium.xcframework**
-
----
-
-# Prerequisites
-
-The build must be executed on **macOS**.
-
-Required tools:
-
-- macOS
-- Xcode + Command Line Tools
+- macOS with Xcode installed
+- CMake 3.9+
 - Git
-- Python 3
-- ~10GB free disk space
 
-Verify Xcode tools are installed:
+## PDFium Integration
 
-```
-xcode-select -p
-```
+This build supports the **GDAL PDF driver using PDFium** as the rendering engine.
 
-If needed:
+PDFium must be built beforehand using the project:
 
 ```
-xcode-select --install
+pdfium_ios_build
 ```
 
----
-
-# Quick Start
-
-1️⃣ Clone or download this repository.
-
-2️⃣ Make the scripts executable:
+The GDAL build expects to find PDFium in:
 
 ```
-chmod +x build_pdfium_ios.sh
-chmod +x patches/apply_ios_patches.sh
+ios/pdfium_ios_build/
 ```
 
-3️⃣ Run the build:
+Expected structure:
 
 ```
-./build_pdfium_ios.sh
-```
-
-The script will automatically:
-
-- Download **depot_tools**
-- Download **PDFium**
-- Apply required patches
-- Build all architectures
-- Create **PDFium.xcframework**
-
----
-
-# Build Output
-
-After a successful build, the following artifacts will be generated:
-
-```
-pdfium/out/
-
-ios-arm64/obj/libpdfium.a
-ios-sim-arm64/obj/libpdfium.a
-ios-sim-x86_64/obj/libpdfium.a
-universal-sim/libpdfium.a
-PDFium.xcframework
-```
-
-Description:
-
-| Artifact | Description |
-|--------|-------------|
-| ios-arm64 | Library for real iOS devices |
-| ios-sim-arm64 | Library for Apple Silicon simulator |
-| ios-sim-x86_64 | Library for Intel simulator |
-| universal-sim | Combined simulator library |
-| PDFium.xcframework | Final framework usable in Xcode |
-
----
-
-# Build Architecture
-
-The build produces the following architectures.
-
-Device:
-
-```
-arm64
-```
-
-Simulator:
-
-```
-arm64
-x86_64
-```
-
-Simulator libraries are merged using:
-
-```
-lipo
-```
-
-The final framework is created with:
-
-```
-xcodebuild -create-xcframework
-```
-
----
-
-# Configuration
-
-Build parameters are defined in:
-
-```
-args_ios_device_arm64.gn
-args_ios_sim_arm64.gn
-args_ios_sim_x64.gn
-```
-
-Important configuration flags:
-
-```
-pdf_is_standalone = true
-pdf_is_complete_lib = true
-
-pdf_enable_v8 = false
-pdf_enable_xfa = false
-pdf_use_skia = false
-
-pdf_use_partition_alloc = false
-use_partition_alloc_as_malloc = false
-
-use_rtti = true
-enable_exceptions = true
-use_custom_libcxx = false
-```
-
-These settings ensure **compatibility with GDAL builds**.
-
----
-
-# Patches Applied
-
-The script `patches/apply_ios_patches.sh` applies several required fixes to allow PDFium to compile correctly on iOS and remain compatible with GDAL.
-
-### iOS build patches
-
-These patches adjust the PDFium build system to work properly with iOS toolchains:
-
-- Disable `pdfium_unittests`
-- Disable `pdfium_embeddertests`
-- Simplify `pdfium_all` target
-- Disable a `libjpeg_turbo` assertion that prevents iOS builds
-- Prevent duplicate compilation of `SkCreateCGImageRef.cpp`
-
-These changes allow PDFium to compile cleanly for iOS device and simulator architectures.
-
----
-
-### GDAL compatibility patch (PDFium 5461)
-
-GDAL 3.7 expects several API signatures that differ slightly from upstream PDFium.  
-A compatibility patch is applied to align PDFium with GDAL's expectations.
-
-This patch modifies the following components:
-
-- Introduces `CPDF_OCContextInterface`
-- Adjusts the inheritance of `CPDF_OCContext`
-- Updates several rendering method signatures to use:
-
-```
-const pdfium::span<const TextCharPos>&
-```
-
-instead of
-
-```
-pdfium::span<const TextCharPos>
-```
-
-Affected files include:
-
-```
-core/fpdfapi/page/cpdf_occontext.cpp
-core/fpdfapi/page/cpdf_occontext.h
-core/fpdfapi/render/cpdf_renderoptions.h
-core/fxge/agg/fx_agg_driver.*
-core/fxge/cfx_renderdevice.*
-core/fxge/renderdevicedriver_iface.*
-core/fxge/win32/printer_driver.
-```
-
-These changes ensure compatibility with the GDAL PDF driver implementation.
-
----
-
-### Chromium style fix
-
-Recent Chromium toolchains require destructors overriding a virtual base class to explicitly declare `override`.
-
-The following change is applied:
-
-```
-~CPDF_OCContextInterface() override = default;
-```
-
-This prevents the following compiler error during the PDFium build:
-
-```
-[chromium-style] Overriding method must be marked with 'override' or 'final'
-```
-
-Without this modification, the build fails during compilation of the PDFium core modules.
-
----
-
-All patches are applied automatically by:
-
-```
-patches/apply_ios_patches.sh
-```
-
-during the build process.
-
----
-
-# GDAL Compatibility
-
-This build is specifically configured for integration with **GDAL 3.7**.
-
-Key compatibility aspects:
-
-- PDFium built as a **static library**
-- Exceptions and RTTI enabled
-- V8 and XFA disabled
-- Skia disabled
-- Compatible span signatures used by GDAL PDF driver
-- Abseil headers exposed for GDAL compilation
-
-The resulting library is intended to be used by GDAL's **PDF driver with PDFium backend**.
-
----
-
-# Repository Structure
-
-```text
 pdfium_ios_build/
-├── build_pdfium_ios.sh
-├── args_ios_device_arm64.gn
-├── args_ios_sim_arm64.gn
-├── args_ios_sim_x64.gn
+└── pdfium
+└── out
+├── ios-arm64
+│ └── obj/libpdfium.a
+├── ios-sim-arm64
+│ └── obj/libpdfium.a
+└── ios-sim-x86_64
+└── obj/libpdfium.a
+```
+
+During compilation, the script `build-gdal-ios.sh` automatically detects the appropriate library for each architecture.
+
+## GDAL Patch for PDFium
+
+To allow integration with PDFium on iOS, a modification is applied to the file:
+
+```
+frmts/pdf/CMakeLists.txt
+```
+
+This change:
+
+- Registers `PDFIUM::PDFIUM` as an imported static library
+- Exposes PDFium headers to GDAL
+- Includes **Abseil** headers required by PDFium
+- Adjusts linking dependencies for iOS
+
+The patch is applied automatically through:
+
+```
+patches/apply_gdal_ios_patches.sh
+```
+
+during the execution of `build-all.sh`.
+
+## Uso rápido
+
+```bash
+cd gdal-ios
+chmod +x build-all.sh build-proj-ios.sh build-gdal-ios.sh
+./build-all.sh
+```
+
+The script will download PROJ and GDAL, build them, and create the `.xcframework`. This process may take 15–30 minutes.
+
+## Uso avanzado
+
+### Use local sources
+
+If you already have GDAL and PROJ downloaded:
+
+```bash
+# Only PROJ
+PROJ_SOURCE_DIR=/path/to/proj ./build-proj-ios.sh
+
+# Only GDAL (after PROJ is compiled)
+GDAL_SOURCE_DIR=/path/to/gdal PROJ_DIR=./install-proj-ios ./build-gdal-ios.sh
+```
+
+### Change versions
+
+```bash
+PROJ_VERSION=9.5 GDAL_BRANCH=v3.7.0 ./build-all.sh
+```
+
+### Source location
+
+By default sources are downloaded to `sources/`. You can change it:
+
+```bash
+SOURCES_DIR=/another/path ./build-all.sh
+```
+
+## Estructura del proyecto
+
+```
+gdal-ios/
+├── build-all.sh # Script principal - ejecuta todo
+├── build-proj-ios.sh # Compila PROJ (dependencia)
+├── build-gdal-ios.sh # Compila GDAL y crea .xcframework
 ├── patches/
-│   └── apply_ios_patches.sh
-├── pdfium/        (downloaded automatically)
-├── depot_tools/   (downloaded automatically)
-└── full_build.log
+│ └── apply_gdal_ios_patches.sh
+├── sources/ # Creado por build-all (PROJ, GDAL)
+├── pdfium_ios_build/ # Build de PDFium requerido
+├── install-proj-ios/ # PROJ compilado
+└── install-ios/
+└── GDAL.xcframework # ← Resultado final
 ```
 
----
+## Uso en Xcode
 
-# Troubleshooting
+1. Drag `GDAL.xcframework` into your project
+2. In "Frameworks, Libraries, and Embedded Content": **Embed & Sign**
+3. In Build Settings > Header Search Paths: `$(SRCROOT)/path/to/GDAL.xcframework/ios-arm64/GDAL.framework/Headers` (recursive)
+4. If using Swift: create a Bridging Header with `#import "gdal.h"`
 
-### Clean build
+## Notas
 
-If the build fails:
+This project **does not build PDFium automatically**.
 
-```
-rm -rf pdfium
-./build_pdfium_ios.sh
-```
-
----
-
-### Verify simulator library
+PDFium must be built beforehand using the project:
 
 ```
-lipo -info pdfium/out/universal-sim/libpdfium.a
+pdfium_ios_build
 ```
 
-Expected output:
+The resulting build must be placed inside the `ios/` directory so GDAL can link against `libpdfium.a`.
 
-```
-Architectures in the fat file: x86_64 arm64
-```
+## Licencia
 
----
+GDAL is licensed under MIT/X License. PROJ under MIT. See the original projects for more details.
 
-# References
+## Repositorio independiente
 
-PDFium  
-https://pdfium.googlesource.com/pdfium
-
-Apple XCFramework Documentation  
-https://developer.apple.com/documentation/xcode/creating-a-multi-platform-binary-framework-bundle
-
-GDAL  
-https://gdal.org
+You can upload this project to your own repository. It contains only scripts and does not include GDAL/PROJ source code. Sources are downloaded at build time from GitHub (OSGeo/PROJ, OSGeo/gdal).
