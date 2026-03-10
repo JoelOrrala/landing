@@ -122,17 +122,17 @@ SOURCES_DIR=/another/path ./build-all.sh
 ## Project Structure
 
 ```
-gdal-ios/
-├── build-all.sh # Script principal - ejecuta todo
-├── build-proj-ios.sh # Compila PROJ (dependencia)
-├── build-gdal-ios.sh # Compila GDAL y crea .xcframework
+ios/
+├── build-all.sh                 # Main script - runs the full build pipeline
+├── build-gdal-ios.sh            # Builds GDAL and creates the xcframework
+├── build-proj-ios.sh            # Builds PROJ (dependency)
 ├── patches/
-│ └── apply_gdal_ios_patches.sh
-├── sources/ # Creado por build-all (PROJ, GDAL)
-├── pdfium_ios_build/ # Build de PDFium requerido
-├── install-proj-ios/ # PROJ compilado
-└── install-ios/
-└── GDAL.xcframework # ← Resultado final
+│   └── apply_gdal_ios_patches.sh
+├── pdfium_ios_build/            # Prebuilt PDFium project required for the GDAL PDF driver
+├── sources/                     # Downloaded GDAL and PROJ sources
+├── install-proj-ios/            # Installed PROJ build
+├── install-ios/
+    └── GDAL.xcframework         # ← Final output
 ```
 
 ## Use in Xcode
