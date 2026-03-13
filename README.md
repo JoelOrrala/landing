@@ -140,7 +140,7 @@ Build parameters are defined in:
 ```
 args_ios_device_arm64.gn
 args_ios_sim_arm64.gn
-args_ios_sim_x64.gn
+args_ios_sim_x86_64.gn
 ```
 
 Important configuration flags:
@@ -287,7 +287,7 @@ pdfium_ios_build/
 ├── build_pdfium_ios.sh
 ├── args_ios_device_arm64.gn
 ├── args_ios_sim_arm64.gn
-├── args_ios_sim_x64.gn
+├── args_ios_sim_x86_64.gn
 ├── patches/
 │   └── apply_ios_patches.sh
 ├── pdfium/        (downloaded automatically)
@@ -327,6 +327,8 @@ Architectures in the fat file: x86_64 arm64
 
 - PDFium  
   https://pdfium.googlesource.com/pdfium
+  https://github.com/rouault/pdfium_build_gdal_3_7
+
 
 - Apple XCFramework Documentation  
   https://developer.apple.com/documentation/xcode/creating-a-multi-platform-binary-framework-bundle
