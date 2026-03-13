@@ -327,8 +327,9 @@ Architectures in the fat file: x86_64 arm64
 
 - PDFium  
   https://pdfium.googlesource.com/pdfium
-  https://github.com/rouault/pdfium_build_gdal_3_7
 
+- Build scripts for PDFium for use with GDAL 3.7 
+  https://github.com/rouault/pdfium_build_gdal_3_7
 
 - Apple XCFramework Documentation  
   https://developer.apple.com/documentation/xcode/creating-a-multi-platform-binary-framework-bundle
