@@ -125,16 +125,28 @@ SOURCES_DIR=/another/path ./build-all.sh
 
 ```
 ios/
-├── build-all.sh                 # Main script - runs the full build pipeline
-├── build-gdal-ios.sh            # Builds GDAL and creates the xcframework
-├── build-proj-ios.sh            # Builds PROJ (dependency)
+├── build-all.sh                  # Main script – runs the full build pipeline
+├── build-gdal-ios.sh             # Builds GDAL and generates the xcframework
+├── build-proj-ios.sh             # Builds PROJ for iOS
+├── build-ios-deps.sh             # Builds third-party dependencies (expat, jpeg, tiff, png, zlib)
+│
 ├── patches/
-│   └── apply_gdal_ios_patches.sh
-├── pdfium_ios_build/            # Prebuilt PDFium project required for the GDAL PDF driver
-├── sources/                     # Downloaded GDAL and PROJ sources
-├── install-proj-ios/            # Installed PROJ build
+│ ├── apply_gdal_ios_patches.sh   # Applies the PDFium integration patch to GDAL
+│ └── CMakeLists_pdfium_ios.txt   # Replacement CMake configuration for the GDAL PDF driver
+│
+├── deps/                         # Source, build, and install directories for dependencies
+├── sources/                      # Downloaded GDAL and PROJ sources
+│
+├── build-ios/                    # Temporary GDAL build directory
+├── build-proj-ios/               # Temporary PROJ build directory
+│
 ├── install-ios/
-│   └── GDAL.xcframework         # ← Final output
+│ └── GDAL.xcframework            # Final output framework
+│
+├── install-proj-ios/             # Installed PROJ builds
+│
+├── pdfium_ios_build/             # Prebuilt PDFium project required for GDAL PDF support
+
 ```
 
 ## Use in Xcode
