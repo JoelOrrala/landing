@@ -105,7 +105,7 @@ Si se presiona `Enter`, se usan los valores por defecto:
 * Listar procesos.
 * Terminar una ventana.
 * Esperar a que todo finalice.
-* Salir limpiamente.
+* Salir.
 
 El `launcher` muestra los PID, el rol de cada proceso, su estado interno y el estado obtenido desde:
 
